@@ -7,7 +7,8 @@ public class Chengshi {
     private int id;
     private String cityName;
     private String cityCode;
-    private int provinceId;
+    private String areaName;
+    private String provinceName;
 
     public int getId() {
         return id;
@@ -25,6 +26,14 @@ public class Chengshi {
         this.cityCode = cityCode;
     }
 
+    public void setAreaNmae(String areaNmae) {
+        this.areaName = areaNmae;
+    }
+
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
+    }
+
     public String getCityName() {
         return cityName;
     }
@@ -33,8 +42,11 @@ public class Chengshi {
         return cityCode;
     }
 
-    public int getProvinceId() {
-        return provinceId;
+    public String getAreaName() {
+        return areaName;
     }
 
+    public String getProvinceName() {
+        return provinceName;
+    }
 }

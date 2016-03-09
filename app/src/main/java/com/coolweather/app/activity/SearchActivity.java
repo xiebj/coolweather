@@ -2,6 +2,7 @@ package com.coolweather.app.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -18,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -38,6 +40,7 @@ public class SearchActivity extends Activity {
     private Chengshi selectedcity;
     private List<Chengshi> chengshiList;
     private Button s;
+    private ImageView ivDeleteText;
     private boolean isFromWeatherActivity;
 
     @Override
@@ -53,14 +56,18 @@ public class SearchActivity extends Activity {
         }
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_search);
-        Log.i("ser", "???");
         listView = (ListView) findViewById(R.id.list_view);
         et = (EditText) findViewById(R.id.edit_text);
+        ivDeleteText = (ImageView) findViewById(R.id.ivDeleteText);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dataList);
         listView.setAdapter(adapter);
         coolWeatherDB = CoolWeatherDB.getInstance(this);
-        Log.i("ser", "!!!");
-        /*
+        ivDeleteText.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                et.setText("");
+            }
+        });
+
         et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -74,35 +81,15 @@ public class SearchActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                    String key = et.getText().toString();
-                    chengshiList = coolWeatherDB.searchcity(key);
-                    if (chengshiList.size() > 0) {
-                        dataList.clear();
-                        for (Chengshi city : chengshiList) {
-                            dataList.add(city.getCityName());
-                        }
-                        adapter.notifyDataSetChanged();
-                        listView.setSelection(0);
-                    }
-                    else {
-                        Toast.makeText(SearchActivity.this, "找不到该城市，请重新输入", Toast.LENGTH_SHORT).show();
-                    }
+                if (s.length() == 0) {
+                    ivDeleteText.setVisibility(View.GONE);
+                } else {
+                    ivDeleteText.setVisibility(View.VISIBLE);
+                }
             }
         });
-        */
-        Chengshi t = new Chengshi();
-        t.setCityName("北京");
-        t.setCityCode("101010100");
-        coolWeatherDB.savechengshi(t);
-        Chengshi p = new Chengshi();
-        p.setCityName("广州");
-        p.setCityCode("101280101");
-        coolWeatherDB.savechengshi(p);
-        Chengshi a = new Chengshi();
-        a.setCityName("潮州");
-        a.setCityCode("101281501");
-        coolWeatherDB.savechengshi(a);
-        s = (Button)findViewById(R.id.seach);
+
+        s = (Button) findViewById(R.id.seach);
         s.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,13 +98,19 @@ public class SearchActivity extends Activity {
                 if (chengshiList.size() > 0) {
                     dataList.clear();
                     for (Chengshi city : chengshiList) {
-                        dataList.add(city.getCityName());
+                        //字符串比对记得用equal不能直接用==
+                        if (city.getCityName().equals(city.getAreaName())) {
+                            dataList.add(city.getCityName() + "-" + city.getProvinceName());
+                        } else {
+                            dataList.add(city.getCityName() + "-" + city.getAreaName());
+                        }
                     }
                     adapter.notifyDataSetChanged();
                     listView.setSelection(0);
                 } else {
                     dataList.clear();
-                    Toast.makeText(SearchActivity.this, "找不到该城市，请重新输入", Toast.LENGTH_SHORT).show();
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(SearchActivity.this, "请输入正确的市或县:)", Toast.LENGTH_SHORT).show();
                 }
 
             }

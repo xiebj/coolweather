@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.coolweather.app.db.CoolWeatherOpenHelper;
 
@@ -155,17 +156,24 @@ public class CoolWeatherDB {
             db.insert("city", null, values);
         }
     }
+
     /**
      * 从数据库读取中国所有的城市，并与搜索栏中的匹配并筛选出来
      */
     public List<Chengshi> searchcity(String key) {
         List<Chengshi> list = new ArrayList<Chengshi>();
-        Cursor cursor = db.query("city", null, "city_or_county_zh = ?", new String[]{key}, null, null, null);
+        //Cursor cursor = db.query("city", null, "city_or_county_zh = ?", new String[]{key}, null, null, null);
+        String sql = "select * from city where city_or_county_zh = ? or area = ?";
+        String[] selectionArgs = new String[]{key, key};
+        Cursor cursor = db.rawQuery(sql, selectionArgs);
         if (cursor.moveToFirst()) {
             do {
                 Chengshi city = new Chengshi();
                 city.setCityName(cursor.getString(cursor.getColumnIndex("city_or_county_zh")));
-                city.setCityCode(cursor.getString(cursor.getColumnIndex("city_id")));
+                city.setAreaNmae(cursor.getString(cursor.getColumnIndex("area")));
+                city.setProvinceName(cursor.getString(cursor.getColumnIndex("province_or_city")));
+                String temp = cursor.getString(cursor.getColumnIndex("city_id"));
+                city.setCityCode(temp.substring(2, temp.length()));
                 list.add(city);
             } while (cursor.moveToNext());
         }

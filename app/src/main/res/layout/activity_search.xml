@@ -5,22 +5,48 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#484E61">
-        <EditText
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background = "@drawable/search_top_background"
+        >
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:id="@+id/seach"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/search_btn_background"
+            android:text="搜索">
+        </Button>>
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/edit_text"
-            android:layout_centerInParent="true"
-            android:textColor="#fff"
-            android:textSize="24sp"/>
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:layout_toLeftOf="@id/seach">
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edit_text"
+                android:singleLine="true"
+                android:background="@drawable/search_frame"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="32dp"
+                android:textSize="12sp"
+                android:hint="请输入城市或者县..."/>
+            <ImageView android:id="@+id/ivDeleteText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/delete"
+                android:layout_centerInParent="true"
+                android:paddingRight="20dp"
+                android:visibility="gone"/>
+        </RelativeLayout>
     </RelativeLayout>>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/seach"
-        android:textSize="20sp"
-        android:text="搜索">
-        </Button>>
     <ListView
         android:id="@+id/list_view"
         android:layout_width="match_parent"
