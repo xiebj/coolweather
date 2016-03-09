@@ -24,6 +24,7 @@ public class CoolWeatherDB {
     public static final int VERSION = 1;
     private static CoolWeatherDB coolWeatherDB;
     private SQLiteDatabase db;
+
     /**
      * 将构造方法私有化
      */
@@ -31,6 +32,7 @@ public class CoolWeatherDB {
         CoolWeatherOpenHelper dbHelper = new CoolWeatherOpenHelper(context, DB_NAME, null, VERSION);
         db = dbHelper.getWritableDatabase();
     }
+
     /**
      * 获取CoolWeatherDB的实例
      */
@@ -40,8 +42,9 @@ public class CoolWeatherDB {
         }
         return coolWeatherDB;
     }
+
     /**
-    *将Province实例存储到数据库
+     * 将Province实例存储到数据库
      */
     public void saveProvince(Province province) {
         if (province != null) {
@@ -51,18 +54,20 @@ public class CoolWeatherDB {
             db.insert("Province", null, values);
         }
     }
+
     /**
      * 从数据库读取全国所有的省份信息
      */
     public List<Province> loadProvinces() {
         List<Province> list = new ArrayList<Province>();
-        Cursor cursor = db.query("Province", null, null, null, null, null, null);
+        String[] t = new String[]{"province_or_city", "SUM(city_id)"};
+        Cursor cursor = db.query("city", t, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             do {
                 Province province = new Province();
-                province.setId(cursor.getInt(cursor.getColumnIndex("id")));
-                province.setProvinceName(cursor.getString(cursor.getColumnIndex("province_name")));
-                province.setProvinceCode(cursor.getString(cursor.getColumnIndex("province_code")));
+                province.setId(cursor.getInt(cursor.getColumnIndex("city_id")));
+                province.setProvinceName(cursor.getString(cursor.getColumnIndex("province_or_city")));
+                province.setProvinceCode(cursor.getString(cursor.getColumnIndex("city_id")));
                 list.add(province);
             } while (cursor.moveToNext());
         }
@@ -71,8 +76,9 @@ public class CoolWeatherDB {
         }
         return list;
     }
+
     /**
-     *将City实例存储到数据库
+     * 将City实例存储到数据库
      */
     public void saveCity(City city) {
         if (city != null) {
@@ -83,12 +89,13 @@ public class CoolWeatherDB {
             db.insert("City", null, values);
         }
     }
+
     /**
      * 从数据库读取某省下所有的城市信息
      */
     public List<City> loadCities(int provinceId) {
         List<City> list = new ArrayList<City>();
-        Cursor cursor = db.query("City", null, "province_id = ?", new String[] {String.valueOf(provinceId)}, null, null, null);
+        Cursor cursor = db.query("city", null, "province_id = ?", new String[]{String.valueOf(provinceId)}, null, null, null);
         if (cursor.moveToFirst()) {
             do {
                 City city = new City();
@@ -104,8 +111,9 @@ public class CoolWeatherDB {
         }
         return list;
     }
+
     /**
-     *将County实例存储到数据库
+     * 将County实例存储到数据库
      */
     public void saveCounty(County county) {
         if (county != null) {
@@ -116,12 +124,13 @@ public class CoolWeatherDB {
             db.insert("County", null, values);
         }
     }
+
     /**
      * 从数据库读取某市下所有的县信息
      */
     public List<County> loadCounties(int cityId) {
         List<County> list = new ArrayList<County>();
-        Cursor cursor = db.query("County", null, "city_id = ?", new String[] {String.valueOf(cityId)}, null, null, null);
+        Cursor cursor = db.query("County", null, "city_id = ?", new String[]{String.valueOf(cityId)}, null, null, null);
         if (cursor.moveToFirst()) {
             do {
                 County county = new County();
@@ -130,6 +139,34 @@ public class CoolWeatherDB {
                 county.setCountyCode(cursor.getString(cursor.getColumnIndex("county_code")));
                 county.setCityId(cityId);
                 list.add(county);
+            } while (cursor.moveToNext());
+        }
+        if (cursor != null) {
+            cursor.close();
+        }
+        return list;
+    }
+
+    public void savechengshi(Chengshi city) {
+        if (city != null) {
+            ContentValues values = new ContentValues();
+            values.put("city_or_county_zh", city.getCityName());
+            values.put("city_id", city.getCityCode());
+            db.insert("city", null, values);
+        }
+    }
+    /**
+     * 从数据库读取中国所有的城市，并与搜索栏中的匹配并筛选出来
+     */
+    public List<Chengshi> searchcity(String key) {
+        List<Chengshi> list = new ArrayList<Chengshi>();
+        Cursor cursor = db.query("city", null, "city_or_county_zh = ?", new String[]{key}, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Chengshi city = new Chengshi();
+                city.setCityName(cursor.getString(cursor.getColumnIndex("city_or_county_zh")));
+                city.setCityCode(cursor.getString(cursor.getColumnIndex("city_id")));
+                list.add(city);
             } while (cursor.moveToNext());
         }
         if (cursor != null) {

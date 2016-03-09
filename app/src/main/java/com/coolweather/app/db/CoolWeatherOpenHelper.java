@@ -9,6 +9,16 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
     /**
+     *建立一个全国所有城市的id表
+     */
+    public static final String CREATE_CHINA =
+                    "create table city ("
+                    + "city_id text primary key, "
+                            + "city_or_county_en text, "
+                            + "city_or_county_zh text, "
+                    + "area text, "
+                    + "province_or_city text)";
+    /**
      * Province表建表语句
      */
     public static final String CREATE_PROVINCE = "create table Province ("
@@ -37,9 +47,10 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_CITY);
-        db.execSQL(CREATE_PROVINCE);
-        db.execSQL(CREATE_COUNTY);
+        db.execSQL(CREATE_CHINA);
+        //db.execSQL(CREATE_CITY);
+        //db.execSQL(CREATE_PROVINCE);
+        //db.execSQL(CREATE_COUNTY);
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
